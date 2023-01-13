@@ -4,23 +4,49 @@
     <div class="header"></div>
     <!-- 标题随轮播图动态切换 -->
     <div class="title">
-      <img src="" alt="" style="width: 100%; height: 100%"  id="imgTitle"/>
+      <img src="" alt="" style="width: 100%; height: 100%" id="imgTitle" />
     </div>
     <!-- 轮播图 -->
     <div class="swiper-container">
       <div class="swiper-wrapper">
-        <div class="swiper-slide" v-for="item in imgList" :key="item.id">
-          <img
-            :src="item.img"
-            alt=""
-            style="
-              width: 7.92rem;
-              object-fit: cover;
-              margin-left: 40px;
-              border-radius: 0.4rem;
-            "
-          />
-        </div>
+        <template v-if="system == 'android'">
+          <div
+            class="swiper-slide"
+            v-for="item in androidImgList"
+            :key="item.id"
+          >
+            <img
+              :src="item.imgs"
+              alt=""
+              style="
+                width: 7.92rem;
+                height: 100%;
+                object-fit: scale-down;
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+                margin-left: 40px;
+                border-radius: 20px;
+              "
+            />
+          </div>
+        </template>
+        <template v-else>
+          <div class="swiper-slide" v-for="items in iosImgList" :key="items.id">
+            <img
+              :src="items.imgs"
+              alt=""
+              style="
+                width: 7.92rem;
+                height: 100%;
+                object-fit: scale-down;
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
+                margin-left: 40px;
+                border-radius: 20px;
+              "
+            />
+          </div>
+        </template>
       </div>
       <!-- 如果需要导航按钮 -->
       <div class="left-button swiper-button-prev"></div>
@@ -38,105 +64,151 @@
 <script>
 import Swiper from "swiper";
 import "swiper/css/swiper.min.css";
-import {sendMessage} from "@/util/initChat";
-import vconsole from 'vconsole'
+import { sendMessage, getDevice } from "@/util/initChat";
+import vconsole from "vconsole";
 export default {
   data() {
     return {
-      //轮播图的图片列表
-      imgList: [
+      //android轮播图
+      androidImgList: [
         {
           id: 1,
-          img: require("./img/19.png"),
+          imgs: "http://cdn.fwyouni.com/media/default/2301/12/1673510437_b366CsAG84.png",
         },
         {
           id: 2,
-          img: require("./img/14.png"),
+          imgs: "http://cdn.fwyouni.com/media/default/2301/12/1673510420_b2hTejGKCJ.png",
         },
         {
           id: 3,
-          img:require("./img/20.gif")
+          imgs: "http://cdn.fwyouni.com/media/default/2301/12/1673510447_e3tRdC3hYF.gif",
         },
       ],
+      //ios轮播图
+      iosImgList: [
+        {
+          id: 1,
+          imgs: "http://cdn.fwyouni.com/media/default/2301/12/1673510420_b2hTejGKCJ.png",
+        },
+        {
+          id: 2,
+          imgs: "http://cdn.fwyouni.com/media/default/2301/12/1673510437_b366CsAG84.png",
+        },
+      ],
+      system: "", // 设备型号
     };
   },
   mounted() {
-    new vconsole()
-    console.log("测试1")
-    this.swiper() //swiper配置项
+    new vconsole();
+    console.log("测试8");
+    this.device();
+    //异步获取，防止未获取到设备型号后就直接执行轮播图了
+    setTimeout(()=>{
+      this.swiper(); //swiper配置项
+    },100)
+    
   },
   methods: {
+    //获取设备型号
+    device() {
+      this.system = getDevice().system;
+    },
     //swiper轮播图配置项
-    swiper(){
+    swiper() {
       new Swiper(".swiper-container", {
-      direction: "horizontal", // 垂直切换选项
-      loop: true, // 循环模式选项
-      autoplay: {
-        disableOnInteraction: false,
-        delay:5000
-      },
-      parallax: true,
-      navigation: {
-        prevEl: ".swiper-button-prev",
-        nextEl: ".swiper-button-next",
-      },
-      pagination: {
-        el: ".swiper-pagination",
-        clickable: true,
-      },
-      on: {
-        //拖动完成时触发
-        slideChangeTransitionEnd: function () {
-          let text = document.getElementById("btnText");
-          let title = document.getElementById("imgTitle")
-          if (this.activeIndex == 3 || this.activeIndex == 0) {
-            text.innerText = "一键变身 >";
-            title.src = require("./img/10.png")
-          } else if (this.activeIndex == 2) {
-            text.innerText = "一键解锁 >";
-            title.src = require("./img/13.png")
-          } else {
-            text.innerText = "晒一晒 >";
-            title.src = require("./img/2.png")
-          }
+        direction: "horizontal", // 垂直切换选项
+        loop: true, // 循环模式选项
+        autoplay: {
+          disableOnInteraction: false,
+          delay: 5000,
         },
-        //为避免拖动轮播图后不生效的情况,设置touchEnd方法(在触摸的最后阶段在获取一次当前的索引)以避免
-        touchEnd:function(){
-          let text = document.getElementById("btnText");
-          let title = document.getElementById("imgTitle")
-          if (this.activeIndex == 3 || this.activeIndex == 0) {
-            text.innerText = "一键变身 >";
-            title.src = require("./img/10.png")
-          } else if (this.activeIndex == 2) {
-            text.innerText = "一键解锁 >";
-            title.src = require("./img/13.png")
-          } else {
-            text.innerText = "晒一晒 >";
-            title.src = require("./img/2.png")
-          }
-        }
-      },
-    });
+        parallax: true,
+        navigation: {
+          prevEl: ".swiper-button-prev",
+          nextEl: ".swiper-button-next",
+        },
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+        on: {
+          //拖动完成时触发
+          slideChangeTransitionEnd: function () {
+            let system = getDevice().system;
+            let text = document.getElementById("btnText");
+            let title = document.getElementById("imgTitle");
+            if (system == "android") {
+              if (this.activeIndex == 3 || this.activeIndex == 0) {
+                text.innerText = "一键变身 >";
+                title.src = require("./img/10.png");
+              } else if (this.activeIndex == 2) {
+                text.innerText = "一键解锁 >";
+                title.src = require("./img/13.png");
+              } else if (this.activeIndex == 1 || this.activeIndex == 4) {
+                text.innerText = "晒一晒 >";
+                title.src = require("./img/2.png");
+              }
+            } else if (system == "ios") {
+              if (this.activeIndex == 1 || this.activeIndex == 3) {
+                text.innerText = "一键解锁 >";
+                title.src = require("./img/13.png");
+              } else {
+                text.innerText = "晒一晒 >";
+                title.src = require("./img/2.png");
+              }
+            }
+          },
+          //为避免拖动轮播图后不生效的情况,设置touchEnd方法(在触摸的最后阶段在获取一次当前的索引)以避免
+          touchEnd: function () {
+            let text = document.getElementById("btnText");
+            let title = document.getElementById("imgTitle");
+            let system = getDevice().system;
+            if(system == "android"){
+              if (this.activeIndex == 3 || this.activeIndex == 0) {
+              text.innerText = "一键变身 >";
+              title.src = require("./img/10.png");
+            } else if (this.activeIndex == 2) {
+              text.innerText = "一键解锁 >";
+              title.src = require("./img/13.png");
+            } else {
+              text.innerText = "晒一晒 >";
+              title.src = require("./img/2.png");
+            }
+            }
+            else{
+              if(this.activeIndex == 1 || this.activeIndex == 3){
+              text.innerText = "一键解锁 >";
+              title.src = require("./img/13.png");
+              }else if(this.activeIndex == 2 || this.activeIndex == 0){
+              text.innerText = "晒一晒 >";
+              title.src = require("./img/2.png");
+              }
+            }
+          },
+        },
+      });
     },
     //按钮点击跳转
     skip() {
-        let text = document.getElementById("btnText").innerText
-        if(text == "一键变身 >"){
-           sendMessage("openTemplateGroup",{
-            id:"43",
-            name:"ai绘画"
-           })
-        }else if(text == "一键解锁 >"){
-           sendMessage("openTemplateGroup",{
-            id:"49",
-            name:"姓氏头像"
-           })
-        }else{
-          sendMessage("openTemplateGroup",{
-            id:"48",
-            name:"全家福"
-          })
-        } 
+      let text = document.getElementById("btnText").innerText;
+      if (text == "一键变身 >") {
+        window.location.href =
+          "http://isubtitle.oss-cn-hangzhou.aliyuncs.com/media/page/painting_cat/index.html";
+        //  sendMessage("openTemplateGroup",{
+        //   id:"43",
+        //   name:"ai绘画"
+        //  })
+      } else if (text == "一键解锁 >") {
+        sendMessage("openTemplateGroup", {
+          id: "49",
+          name: "姓氏头像",
+        });
+      } else {
+        sendMessage("openTemplateGroup", {
+          id: "48",
+          name: "全家福",
+        });
+      }
     },
   },
 };
@@ -246,6 +318,6 @@ body {
 }
 .swiper-pagination {
   position: relative;
-  margin-top: 0.1333rem;
+  margin-top: 0.2667rem;
 }
 </style>
