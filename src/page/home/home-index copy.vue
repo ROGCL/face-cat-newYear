@@ -251,26 +251,25 @@ export default {
 <style scoped>
 #app {
   width: 100%;
-  /* height: 22.1633rem; */
+  height: 23.1633rem;
   /* height: 100vh; */
-  min-height: 100vh;
   background-image: url("./img/5.png");
   background-size: 100% 100%;
   background-repeat: no-repeat;
 }
 .header {
   width: 7.32rem;
-  height: 2.5067rem;
+  height: 2.7067rem;
   background-image: url("./img/11.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   margin: 0 auto;
-  transform: translateY(.4667rem);
+  transform: translateY(1.4667rem);
 }
 .title {
   width: 6.64rem;
-  height: 1.82rem;
-  margin: .6333rem auto;
+  height: 1.92rem;
+  margin: 1.3333rem auto;
 }
 #imgReview {
   width: 100%;
@@ -278,7 +277,7 @@ export default {
 }
 .swiper-container {
   width: 100%;
-  height: 8.4667rem;
+  height: 10.4667rem;
 }
 .left-button {
   width: 1.04rem;
@@ -354,6 +353,6 @@ body {
 }
 .swiper-pagination {
   position: relative;
-  margin-top: 0.2333rem;
+  margin-top: 0.2667rem;
 }
 </style>
